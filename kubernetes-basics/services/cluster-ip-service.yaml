@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: cluster-ip-service
+spec:
+  selector:
+    app: my-node-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376

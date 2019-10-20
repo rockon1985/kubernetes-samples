@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: myappdeployment
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: my-node-app
+    spec:
+      containers:
+        - name: my-node-app
+          # replace the image name with your app's docker image
+          image: ketanstechracers/node-dockerized:latest
+          ports:
+            - containerPort: 8080
