@@ -52,5 +52,7 @@ You can find the samples in `kubernetes-basics/services` folder
 Objects of type secret are intended to hold sensitive information, such as passwords, OAuth tokens, and ssh keys. You can find the examples in `kubernetes-advanced/secrets` folder.
 
 ### ConfigMaps
+ConfigMaps are used to store configuration params and data needed in the pods. They allow you to decouple configuration artifacts from image content to keep containerized applications portable.
 
+You can find the examples in ``kubernetes-advanced/configmaps` folder`
 ### Jobs
