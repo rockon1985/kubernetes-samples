@@ -44,7 +44,10 @@ You can find the samples in `kubernetes-basics/services` folder
 
 ### Volumes
 
+Volumes are persistent storage attached with the pod that can outlive the pod's lifecycle. 
+You can find a full list of volumes available [on this link](https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes).
 
+The samples related to few popular types of volumes can be found in `kubernetes-basics/volumes` folder
 
 ## Kubernetes Advanced
 
@@ -54,5 +57,12 @@ Objects of type secret are intended to hold sensitive information, such as passw
 ### ConfigMaps
 ConfigMaps are used to store configuration params and data needed in the pods. They allow you to decouple configuration artifacts from image content to keep containerized applications portable.
 
-You can find the examples in ``kubernetes-advanced/configmaps` folder`
+You can find the examples in ``kubernetes-advanced/configmaps` folder
+
 ### Jobs
+
+Cron jobs are useful for creating periodic and recurring tasks, like running backups or sending emails.
+
+## Kubernetes Examples
+
+This section covers various examples to dockerise your applications using various components. You can find the kubernetes yaml files in the `kubernetes-examples` folder. 
