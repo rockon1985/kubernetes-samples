@@ -14,6 +14,12 @@ Table of Contents
     * [Secrets](#secrets)
     * [ConfigMaps](#configmaps)
     * [Jobs](#jobs)
+  * [Kubernetes Examples](#kubernetes-examples)
+    * [Rails App on Kubernetes](#rails-app-on-kubernetes)
+    * [Node App on Kubernetes](#node-app-on-kubernetes)
+  * [Helm Charts](#helm-charts-examples)
+    * [Rails App Helm Chart](#rails-app-helm-chart) 
+    * [Node App](#node-app-helm-chart) 
 
 ## Dockerizing your app:
 
@@ -66,3 +72,6 @@ Cron jobs are useful for creating periodic and recurring tasks, like running bac
 ## Kubernetes Examples
 
 This section covers various examples to dockerise your applications using various components. You can find the kubernetes yaml files in the `kubernetes-examples` folder. 
+
+### Rails app on Kubernetes
+
