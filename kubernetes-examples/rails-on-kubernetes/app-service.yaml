@@ -1,0 +1,20 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: demo-web-service
+  labels:
+    app: demo-web-service
+spec:
+  # If you want to expose app service using Ingress, then keep the service as NodePort
+  type: NodePort
+  # If you wish to Expose the service using LoadBalancer, then uncomment below line
+  # type: LoadBalancer
+  ports:
+    - port: 3000
+      targetPort: 3000
+      # if you are using LoadBalancer service type, select a NodePort between range 30000-36000
+      # nodePort: 30001
+      name: http
+      protocol: TCP
+  selector:
+    app: demo-rails-app

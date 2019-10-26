@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Values.app.name }}-service"
+  labels:
+    run: "{{ .Values.app.name }}-service"
+spec:
+  ports:
+  - port: {{ .Values.app.service.port }}
+    targetPort: {{ .Values.app.service.targetPort }}
+    {{- if eq .Values.service.type "LoadBalancer" }}
+    nodePort: {{ .Values.app.service.nodePort }}
+    {{- end}}
+    protocol: {{ .Values.app.service.protocol }}
+  selector:
+    run: {{ .Values.app.name }}

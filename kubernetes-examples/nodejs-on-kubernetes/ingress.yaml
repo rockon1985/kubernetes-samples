@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: node-app-ingress
+  annotations:
+    # in case you have a static global ip assigned, uncomment the below line 
+    # kubernetes.io/ingress.global-static-ip-name: demo-static-ip
+  labels:
+    app: node-app-ingress
+spec:
+  backend:
+    serviceName: node-app-service
+    servicePort: 3000

@@ -1,0 +1,367 @@
+# RAILS APP DEPLOYMENT
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: demo-rails-app
+  labels:
+    app: demo-rails-app
+    chart: demo-rails-app-0.1.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-rails-app
+  template:
+    metadata:
+      labels:
+        app: demo-rails-app
+    spec:
+      volumes:
+      - name: cloudsql-instance-credentials
+        secret:
+          secretName: cloudsql-instance-credentials
+      containers:
+        - name: demo-rails-app
+          image: "my-rails-app:latest"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env: 
+          # Environment like keys and credentials are supposed to be mounted from secret         
+          - name: ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: ACCESS_KEY
+          - name: API_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: API_TOKEN
+          - name: AUTHY_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: AUTHY_API_KEY
+          - name: AUTHY_API_URL
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: AUTHY_API_URL
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: DB_HOST
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: DB_NAME
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: DB_PASSWORD
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: DB_USERNAME
+          - name: DEVISE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: DEVISE_SECRET
+          - name: FACEBOOK_APP_ID
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: FACEBOOK_APP_ID
+          - name: FACEBOOK_APP_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: FACEBOOK_APP_SECRET
+          - name: RAILS_MASTER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: RAILS_MASTER_KEY
+          - name: REDIS_PASS
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: REDIS_PASS
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: REDIS_URL
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: SECRET_KEY
+          - name: SECRET_KEY_BASE
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: SECRET_KEY_BASE
+          - name: SMTP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: SMTP_PASSWORD
+          - name: TWITTER_APP_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: TWITTER_APP_SECRET
+          - name: TWITTER_CONSUMER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: TWITTER_CONSUMER_KEY
+          # Other non sensitive env variables can be directly given values
+          - name: FOG_DIR
+            value: ""
+          - name: FOG_ENDPOINT
+            value: ""
+          - name: FOG_HOST
+            value: ""
+          - name: FOG_MAX_AGE
+            value: ""
+          - name: FOG_PROVIDER
+            value: "fog/google"
+          - name: FOG_PUBLIC
+            value: ""
+          - name: MAILER_HOST
+            value: ""
+          - name: MAILER_SENDER
+            value: ""
+          - name: PROVIDER
+            value: "Google"
+          - name: RAILS_ENV
+            value: "production"
+          - name: RAILS_SERVE_STATIC_FILES
+            value: "1"
+          - name: ROLLBAR_ACCESS_TOKEN
+            value: ""
+          - name: SMTP_ADDRESS
+            value: ""
+          - name: SMTP_DOMAIN
+            value: ""
+          - name: SMTP_PORT
+            value: "587"
+          - name: SMTP_USERNAME
+            value: ""
+          - name: UPLOADER_STORAGE_PATH
+            value: "fog"
+          # NOTE: Your rails app must have a liveliness and
+          # a readiness route to hit that returns 200 status
+          # in order to check if the app is running correctly
+          # by replication controller
+          livenessProbe:
+            httpGet:
+              path: /_liveness
+              port: http
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /_readiness
+              port: http
+              initialDelaySeconds: 30
+              periodSeconds: 20
+              timeoutSeconds: 30        
+        #### CLOUD SQL PROXY FOR Google Cloud based hosted DB #####
+        # Uncomment below container to add cloud-sql-proxy container ass required by Gcloud 
+        # - name: cloudsql-proxy
+        #   image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        #   command: ["/cloud_sql_proxy",
+        #             "-instances==tcp:5432",
+        #             "-credential_file=/secrets/cloudsql/credentials.json"]
+        #   securityContext:
+        #     runAsUser: 2  # non-root user
+        #     allowPrivilegeEscalation: false
+        #   volumeMounts:
+        #     - name: cloudsql-instance-credentials
+        #       mountPath: /secrets/cloudsql
+        #       readOnly: true
+---
+# SIDEKIQ DEPLOYMENT
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: sidekiq-worker
+  labels:
+    app: sidekiq-worker
+    chart: demo-rails-app-0.1.0
+    
+    heritage: Tiller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sidekiq-worker
+      
+  template:
+    metadata:
+      labels:
+        app: sidekiq-worker
+        
+    spec:
+      volumes:
+      - name: cloudsql-instance-credentials
+        secret:
+          secretName: cloudsql-instance-credentials
+      containers:
+        - name: sidekiq-worker
+          image: ":latest"
+          imagePullPolicy: Always
+          command:
+          - /bin/sh
+          - -c
+          - |
+            echo "======= STARTING RPUSH ===="
+            rpush start -e production
+            echo "======= STARTING SIDEKIQ ======="
+            sidekiq -C config/sidekiq.yml
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:          
+          - name: ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: ACCESS_KEY
+          - name: API_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: API_TOKEN
+          - name: AUTHY_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: AUTHY_API_KEY
+          - name: AUTHY_API_URL
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: AUTHY_API_URL
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: DB_HOST
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: DB_NAME
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: DB_PASSWORD
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: DB_USERNAME
+          - name: DEVISE_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: DEVISE_SECRET
+          - name: FACEBOOK_APP_ID
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: FACEBOOK_APP_ID
+          - name: FACEBOOK_APP_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: FACEBOOK_APP_SECRET
+          - name: RAILS_MASTER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: RAILS_MASTER_KEY
+          - name: REDIS_PASS
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: REDIS_PASS
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: REDIS_URL
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: SECRET_KEY
+          - name: SECRET_KEY_BASE
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: SECRET_KEY_BASE
+          - name: SMTP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: SMTP_PASSWORD
+          - name: TWITTER_APP_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: TWITTER_APP_SECRET
+          - name: TWITTER_CONSUMER_KEY
+            valueFrom:
+              secretKeyRef:
+                name: app-env-secret
+                key: TWITTER_CONSUMER_KEY
+          - name: FOG_DIR
+            value: ""
+          - name: FOG_ENDPOINT
+            value: ""
+          - name: FOG_HOST
+            value: ""
+          - name: FOG_MAX_AGE
+            value: ""
+          - name: FOG_PROVIDER
+            value: "fog/google"
+          - name: FOG_PUBLIC
+            value: ""
+          - name: MAILER_HOST
+            value: ""
+          - name: MAILER_SENDER
+            value: ""
+          - name: PROVIDER
+            value: "Google"
+          - name: RAILS_ENV
+            value: "production"
+          - name: RAILS_SERVE_STATIC_FILES
+            value: "1"
+          - name: ROLLBAR_ACCESS_TOKEN
+            value: ""
+          - name: SMTP_ADDRESS
+            value: ""
+          - name: SMTP_DOMAIN
+            value: ""
+          - name: SMTP_PORT
+            value: "587"
+          - name: SMTP_USERNAME
+            value: ""
+          - name: UPLOADER_STORAGE_PATH
+            value: "fog"

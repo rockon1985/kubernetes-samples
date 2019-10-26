@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  template:
+    metadata:
+      labels:
+        run: {{ .Values.app.name }}
+    spec:
+      containers:
+      - name: {{ .Values.app.name }}
+        image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+        imagePullPolicy: Always
+        env:
+        - name: PORT
+          value: {{ .Values.app.service.port | quote }}
+        - name: NODE_ENV
+          value: {{ .Values.app.env | quote }}
+        ports:
+        - containerPort: 3000
+      imagePullSecrets:
+        - name: "{{ .Values.app.name }}-regcred"

@@ -1,0 +1,30 @@
+# Default values for geotrade.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+# NODE APP CONFIGS
+app:
+  name: node-app
+  replicaCount: 1
+  image:
+    repository: registry.gitlab.com/ksaxena1/node-sample-app
+    tag: 0.0.1
+    pullPolicy: Always
+  service:
+    name: node-app-service
+    type: LoadBalancer
+    port: 4000
+    targetPort: 4000
+    nodePort: 30002
+    protocol: TCP
+  secret:
+    name: regcred
+  env: production
+
+# If you have an external/private docker registry like gitlab,
+# you need to set the `externalRegistry.enabled` to true
+# Also you would need to update your credentials in `config/registry-config.json` file
+externalRegistry:
+  enabled: true
+
+ingress:
+  enabled: false

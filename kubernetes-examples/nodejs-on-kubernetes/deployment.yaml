@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: node-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: node-app
+    spec:
+      containers:
+      - name: node-app
+        image: "node-app-image:1.0.0"
+        imagePullPolicy: Always
+        env:
+        - name: PORT
+          value: "4000"
+        - name: NODE_ENV
+          value: "production"
+        ports:
+        - containerPort: 3000
+      imagePullSecrets:
+        - name: "node-app-regcred"

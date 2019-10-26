@@ -1,0 +1,94 @@
+# Default values for my-rails-app.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+appname: demo-web-service
+sidekiq:
+  replicaCount: 1
+  name: sidekiq-worker
+image:
+  repository: ''
+  tag: latest
+  pullPolicy: Always
+service:
+  name: demo-web-service
+  type: NodePort    # Possible values: [ LoadBalancer | NodePort | ClusterIP ]
+  targetPort: 3000
+  port: 3000
+  nodePort: 30001
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+env:
+  secret:
+    RAILS_MASTER_KEY: fake
+    SECRET_KEY_BASE: fake
+    # DATABASE
+    DB_NAME: fake
+    DB_HOST: fake
+    DB_PASSWORD: fake
+    DB_USERNAME: fake
+    # REDIS
+    REDIS_URL: "redis://:pass@url:port"
+    REDIS_PASS: fake
+    SMTP_PASSWORD: 'fake'
+    #FOG
+    ACCESS_KEY: fake
+    SECRET_KEY: fake
+    DEVISE_SECRET: fake
+    JWT_SECRET: fake
+    # Google Map
+    MAP_API_KEY: 'fake'
+    #FACEBOOK
+    FACEBOOK_APP_ID: 'fake'
+    FACEBOOK_APP_SECRET: 'fake'
+    #TWITTER
+    TWITTER_CONSUMER_KEY: 'fake'
+    TWITTER_APP_SECRET: 'fake'
+    # Twilio
+    AUTHY_API_KEY: 'fake'
+    AUTHY_API_URL: 'https://api.authy.com'
+    # Photo Editor SDK
+    API_TOKEN: 'fake'
+    PHTOTO_EDITOR_SIGNATURE: 'fake'
+    # FCM
+    PUSH_NOTIFICATION_APP: "push_notification_app"
+    FIREBASE_SERVER_KEY: "fakes"
+  normal:
+    RAILS_ENV: production
+    SMTP_ADDRESS: ''
+    SMTP_PORT: '587'
+    SMTP_DOMAIN: ''
+    SMTP_USERNAME: ''
+    MAILER_SENDER: ''
+    MAILER_HOST: ''
+    UPLOADER_STORAGE_PATH: 'fog'
+    ROLLBAR_ACCESS_TOKEN: ''
+    RAILS_SERVE_STATIC_FILES: 1
+    FOG_DIR: ''
+    FOG_PROVIDER: fog/google
+    PROVIDER: Google
+    FOG_HOST: ''
+    FOG_ENDPOINT: ''
+    FOG_PUBLIC: ''
+    FOG_MAX_AGE: ''
+db:
+  instance: ''
+ingress:
+  # set enabled to false if you don't wish to expose app using ingress
+  enabled: true
+  # If you have a static global IP that you want to assign to exposed service
+  # then set ipPresent to true and set `ipname` to the name of ip address
+  # to get the list of reserved IPs in gcloud you can fire command: `gcloud compute addresses list` 
+  ipPresent: true
+  ipname: demo-static-ip
+  ipAddress: ""
+  name: demo-ingress
+
+secret:
+  env: app-env-secret
+  dbInstance: cloudsql-instance-credentials
