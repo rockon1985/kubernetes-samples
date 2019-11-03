@@ -16,10 +16,12 @@ Table of Contents
     * [Jobs](#jobs)
   * [Kubernetes Examples](#kubernetes-examples)
     * [Rails App on Kubernetes](#rails-app-on-kubernetes)
-    * [Node App on Kubernetes](#node-app-on-kubernetes)
+    * [Node App on Kubernetes](#nodejs-app-on-kubernetes)
   * [Helm Charts](#helm-charts-examples)
+    * [Intro to Helm Chart](#intro-to-helm-chart)
+    * [Initializing Helm](#initializing-helm)
     * [Rails App Helm Chart](#rails-app-helm-chart) 
-    * [Node App](#node-app-helm-chart) 
+    * [Node App Helm Chart](#node-app-helm-chart) 
 
 ## Dockerizing your app:
 
@@ -75,3 +77,56 @@ This section covers various examples to dockerise your applications using variou
 
 ### Rails app on Kubernetes
 
+Please check the procedure and the related files in `kubernetes-examples/rails-on-kubernetes` folder.
+
+### Nodejs app on Kubernetes
+
+Please check the procedure and the related files in `kubernetes-examples/rails-on-kubernetes` folder.
+
+## Helm Chart Examples
+
+### Intro to Helm Charts
+[Helm](#https://docs.helm.sh/using_helm/) is a deployment release manager on top of kubernetes. It keeps track of all the releases and provides us the option to rollback to any previous release without the efforts to update the yaml files.
+
+Helm uses a packaging format called [helm-charts](https://docs.helm.sh/developing_charts/#charts). A chart is a collection of files that describe a related set of Kubernetes resources.
+
+Helm charts gives us many programming constructs like `if-else`, `looping over array and objects` and helper methods to simplify our kubernetes object declaration.
+
+### Initializing Helm
+
+In order to use helm, you need to first install and initialize helm and tiller in your system.
+
+**Installation** You can find the installation instruction in [this link](https://docs.helm.sh/using_helm/#installing-helm)
+
+**Initializing**
+In order to initialize helm in cluster of different providers like GCE, minikube, etc., checkout the [Helm Distribution guide](https://docs.helm.sh/using_helm/#kubernetes-distribution-guide)
+
+### Hello world Helm chart
+You can find a simple hello world Helm chart in `helm-examples/hello-world`
+
+To run the helm chart and create kubernetes resources, use command:
+```
+helm install --name RELEASE_NAME ./helm-examples/hello-world-helm-chart
+```
+
+To just see the computed yaml and debugging the code, use command:
+```
+helm install --debug --dry-run ./helm-examples/hello-world-helm-chart
+```
+
+### Rails App Helm Chart
+
+Please check the procedure and the related files in `helm-examples/rails-app-helm-chart` folder.
+To run the helm chart and create kubernetes resources, use command:
+```
+helm install --name RELEASE_NAME ./helm-examples/rails-app-helm-chart
+```
+
+### Node App Helm Chart
+
+Please check the procedure and the related files in `helm-examples/nodejs-app-helm-chart` folder.
+
+To run the helm chart and create kubernetes resources, use command:
+```
+helm install --name RELEASE_NAME ./helm-examples/nodejs-app-helm-chart
+```
