@@ -11,13 +11,70 @@ spec:
     spec:
       containers:
       - name: node-app
-        image: "node-app-image:1.0.0"
+        image: ketanstechracers/node-dockerized:latest
         imagePullPolicy: Always
         env:
+        # non sensitive env variables
         - name: PORT
           value: "4000"
         - name: NODE_ENV
           value: "production"
+        # sensitive env variables
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_NAME
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_HOST
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_PASSWORD
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: DB_USERNAME
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: REDIS_URL
+        - name: REDIS_PASS
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: REDIS_PASS
+        - name: SMTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: SMTP_PASSWORD
+        - name: ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: ACCESS_KEY
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: SECRET_KEY
+        - name: PUSH_NOTIFICATION_APP
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: PUSH_NOTIFICATION_APP
+        - name: FIREBASE_SERVER_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secret
+              key: FIREBASE_SERVER_KEY
         ports:
         - containerPort: 3000
       imagePullSecrets:

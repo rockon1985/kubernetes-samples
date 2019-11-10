@@ -2,13 +2,18 @@
 kind: Pod
 apiVersion: v1
 metadata:
-  name: task-pv-pod
+  name: task-volumes-pod
 spec:
   volumes:
+    # === PVC Volume === 
     - name: task-pv-storage
       persistentVolumeClaim:
         # name of the PVC you want to attach with the Pod
         claimName: task-pv-claim
+    # === EmptyDir Volume === 
+    - name: cache-volume
+      emptyDir: {}
+    # === HostPath Volume === 
   containers:
     - name: task-pv-container
       image: nginx
@@ -17,5 +22,7 @@ spec:
           name: "http-server"
       volumeMounts:
         # path in the pod where you want to mount the storage
-        - mountPath: "/mnt/data"
+        - mountPath: "/usr/share/nginx/html"
           name: task-pv-storage
+        - mountPath: "/usr/cache"
+          name: cache-volume

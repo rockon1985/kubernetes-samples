@@ -7,8 +7,7 @@ sidekiq:
   replicaCount: 1
   name: sidekiq-worker
 image:
-  repository: ''
-  tag: latest
+  repository: ketanstechracers/rails-dockerized:0.0.2
   pullPolicy: Always
 service:
   name: demo-web-service

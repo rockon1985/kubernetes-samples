@@ -25,16 +25,14 @@ spec:
           secretName: {{ .Values.secret.dbInstance }}
       containers:
         - name: {{ .Values.sidekiq.name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: {{ .Values.image.repository }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
           - /bin/sh
           - -c
           - |
-            # echo "======= STARTING RPUSH ===="
-            # rpush start -e production
             echo "======= STARTING SIDEKIQ ======="
-            sidekiq -C config/sidekiq.yml
+            sidekiq -C config/sidekiq.yml.erb
           ports:
             - name: http
               containerPort: 3000

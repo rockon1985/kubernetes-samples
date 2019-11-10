@@ -1,29 +1,12 @@
-kind: PersistentVolume
 apiVersion: v1
-metadata:
-  name: task-pv-volume
-  labels:
-    type: local
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 500Mi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/data"
-
----
-
 kind: PersistentVolumeClaim
-apiVersion: v1
 metadata:
+  creationTimestamp: null
   name: task-pv-claim
 spec:
-  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 100Mi
-
+status: {}

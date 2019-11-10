@@ -1,4 +1,4 @@
-# Default values for geotrade.
+# Default values for nodejs-app-helm.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 # NODE APP CONFIGS
@@ -6,8 +6,8 @@ app:
   name: node-app
   replicaCount: 1
   image:
-    repository: registry.gitlab.com/ksaxena1/node-sample-app
-    tag: 0.0.1
+    repository: ketanstechracers/node-dockerized
+    tag: latest
     pullPolicy: Always
   service:
     name: node-app-service
@@ -17,14 +17,34 @@ app:
     nodePort: 30002
     protocol: TCP
   secret:
-    name: regcred
-  env: production
+    registry: regcred
+    env: app-env-secret
+env:
+  secret:
+    # DATABASE
+    DB_NAME: fake2
+    DB_HOST: fake
+    DB_PASSWORD: fake
+    DB_USERNAME: fake
+    # REDIS
+    REDIS_URL: "redis://:pass@url:port"
+    REDIS_PASS: fake
+    SMTP_PASSWORD: 'fake'
+    ACCESS_KEY: fake
+    SECRET_KEY: fake
+    PUSH_NOTIFICATION_APP: "push_notification_app"
+    FIREBASE_SERVER_KEY: "fakes"
+    SECRET_ENV: fake
+  normal:
+    PORT: 3000
+    NODE_ENV: production
+    NORMAL_ENV: normal
 
 # If you have an external/private docker registry like gitlab,
 # you need to set the `externalRegistry.enabled` to true
 # Also you would need to update your credentials in `config/registry-config.json` file
 externalRegistry:
-  enabled: true
+  enabled: false
 
 ingress:
   enabled: false
